@@ -4,10 +4,11 @@ const _ = require("lodash");
 
 const GOAL = "shiny gold";
 const tree = {};
+const containsTree = {};
 
 function parseBags(bagStr) {
   const [count, adjective, colour, bag] = bagStr.split(" ");
-  return { count, adjective, colour, key: `${adjective} ${colour}` };
+  return { count: _.parseInt(count), adjective, colour, key: `${adjective} ${colour}` };
 }
 
 function parseBag(bagStr) {
@@ -16,12 +17,12 @@ function parseBag(bagStr) {
 }
 
 function countBags(colour, record) {
-  record[colour] = true;
+  let count = 1;
   const leafs = tree[colour] || [];
   for (const leaf of leafs) {
-    countBags(leaf, record);
+    count += countBags(leaf, record);
   }
-  return record;
+  return count;
 }
 
 async function main() {
@@ -36,13 +37,15 @@ async function main() {
     const outerBag = parseBag(container);
     for (const containee of containees.split(", ")) {
       const innerBag = parseBags(containee);
-      const leaf = _.get(tree, innerBag.key, []);
-      leaf.push(outerBag.key);
-      tree[innerBag.key] = leaf;
+      const leaf = _.get(tree, outerBag.key, []);
+      for (let i = 0; i < innerBag.count; i++) {
+        leaf.push(innerBag.key);
+      }
+      tree[outerBag.key] = leaf;
     }
   }
 
-  console.log(Object.keys(countBags(GOAL, {})).length - 1);
+  console.log(countBags(GOAL, {}) - 1);
 }
 
 main();
