@@ -30,6 +30,9 @@ async function main() {
 
   for await (const line of file) {
     const [container, containees] = line.split(" contain ");
+    if (containees == "no other bags.") {
+      continue;
+    }
     const outerBag = parseBag(container);
     for (const containee of containees.split(", ")) {
       const innerBag = parseBags(containee);
