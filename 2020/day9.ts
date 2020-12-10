@@ -1,25 +1,12 @@
-import { RBTree } from "bintrees";
 import * as _ from "lodash";
 
 const readline = require("readline");
 const fs = require("fs");
 
-function findPair(target: number, tree: RBTree<number>): boolean {
-	const outer = tree.iterator();
-	let a: number = 0;
-	while ((a = outer.next()) !== null) {
-		if (a * 2 > target) {
-			return false;
-		}
-		const inner = _.cloneDeep(outer);
-		let b: number = 0;
-		while ((b = inner.next()) !== null) {
-			let x = a + b;
-			if (x == target) {
-				return true;
-			} else if (x > target) {
-				continue;
-			}
+function findPair(target: number, table: Map<number, number>): boolean {
+	for (const guess of Array.from(table.keys())) {
+		if (table.get(target - guess)) {
+			return true;
 		}
 	}
 	return false;
@@ -51,16 +38,24 @@ async function main() {
 		numbers.push(_.parseInt(line));
 	}
 
-	const tree = new RBTree((a: number, b: number) => a - b);
+	const table: Map<number, number> = new Map();
 	for (let i = 0; i < 25; i++) {
-		tree.insert(numbers[i]);
+		table.set(numbers[i], 1);
 	}
 	for (let i = 25; i < numbers.length; i++) {
 		const number = numbers[i];
 
-		if (findPair(number, tree)) {
-			tree.remove(numbers[i - 25]);
-			tree.insert(number);
+		if (findPair(number, table)) {
+			const n = numbers[i - 25];
+			const current = table.get(n);
+			if (current) {
+				if (current - 1 == 0) {
+					table.delete(n);
+				} else {
+					table.set(n, current - 1);
+				}
+			}
+			table.set(number, 1);
 		} else {
 			console.log(number);
 			console.log(findSet(number, numbers));
