@@ -1,37 +1,38 @@
 import * as _ from "lodash";
 
-interface NumberPair {
-	first: number;
-	second: number;
-}
 async function main() {
-	//const input = "16,11,15,0,1,7";
-	const input = "0,3,6";
+	const input = "16,11,15,0,1,7";
+	//const input = "0,3,6";
 	const numbers = input.split(",").map(_.parseInt);
-	const numbersMap: Map<number, number> = new Map();
+	const numbersMap: Map<number, [number]> = new Map();
 
-	for (let i = 0; i < numbers.length - 1; i++) {
+	for (let i = 0; i < numbers.length; i++) {
 		const n = numbers[i];
-		numbersMap.set(n, i + 1);
+		numbersMap.set(n, [i + 1]);
 	}
 
-	let lastIndex: number | undefined = numbers.length - 1;
-	let lastNum = numbers[lastIndex];
-	let turn = lastIndex + 1;
-	for (let i = numbers.length; i <= 2022; i++) {
-		turn++;
-		let newIndex = numbersMap.get(lastNum);
-		if (lastIndex !== undefined && newIndex !== undefined) {
-			lastNum = newIndex - lastIndex;
-			lastIndex = numbersMap.get(lastNum);
-			numbersMap.set(lastNum, turn);
-			
+	let lastNum: number | undefined = numbers[numbers.length - 1];
+	for (let turn = numbers.length + 1; turn <= 30000000; turn++) {
+		let index = numbersMap.get(lastNum);
+		if (index !== undefined && index.length > 1) {
+			let lastIndex = index[index.length - 1];
+			let firstIndex = index[index.length - 2];
+			lastNum = lastIndex - firstIndex;
+			let newIndex = (numbersMap.get(lastNum) as [number]) ?? [];
+			newIndex.push(turn);
+			if (newIndex.length == 1) {
+				numbersMap.set(lastNum, newIndex);
+			}
 		} else {
-			lastIndex = numbersMap.get(0);
-			numbersMap.set(0, turn);
-			lastNum = 0;
+			let x = numbersMap.get(0);
+			if (x == undefined) {
+				numbersMap.set(0, [turn]);
+			} else {
+				x.push(turn);
+				lastNum = 0;
+			}
 		}
-		console.log(turn, lastNum)
+		//console.log(turn, lastNum);
 	}
 	console.log(lastNum);
 }
