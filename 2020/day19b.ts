@@ -33,6 +33,15 @@ async function main() {
 		switch (mode) {
 			case MODE.RULES:
 				let [key, rule] = line.split(": ");
+
+				if (key == "8") {
+					rule = `(${CTRL}42${CTRL})+`;
+				}
+				if (key == "11") {
+					rule =
+						"42 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31 | 42 42 42 42 42 31 31 31 31 31"; // Where is your god now
+				}
+
 				rule = rule.replace(/"/g, "");
 				rule = rule
 					.split(" ")
