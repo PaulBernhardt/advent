@@ -1,5 +1,3 @@
-import { number } from 'yargs';
-
 enum Direction {
 	x = 'x',
 	y = 'y',
