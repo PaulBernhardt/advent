@@ -1,41 +1,41 @@
-import { readIntoArray, readIntoObject } from '../utils/fileUtils';
-import { BingoNumber, parseBingoCards, solvePartOne, solvePartTwo } from './day4';
-
-function b(x, y, marked): BingoNumber {
-	return { x, y, marked };
-}
+import { readIntoObject } from '../utils/fileUtils';
+import { Card, ParseBingoCards } from './bingo';
+import { solvePartOne, solvePartTwo, markCards } from './day4';
 
 describe('when solving the day 4 challenge', () => {
 	it('should return 4512 on the sample input', async () => {
-		const values = await readIntoArray('./source/day4/day4.sample.txt', (x) => x);
+		const values = await readIntoObject('./source/day4/day4.sample.txt', new ParseBingoCards());
 		const result = solvePartOne(values);
 		expect(result).toBe(4512);
 	});
-	describe('when parsing the bingo table input', () => {
-		it('should parse simple input into a BingoTable', async () => {
-			const table = await readIntoObject('./source/day4/day4.simple.txt', parseBingoCards);
-			expect(table.calls).toMatchObject([1, 3, 4]);
-			const cardOne = table.cards[0];
-			expect(cardOne.contents.get(2)).toMatchObject(b(0, 0, false));
-			expect(cardOne.contents.get(14)).toMatchObject(b(0, 1, false));
-			expect(cardOne.contents.get(10)).toMatchObject(b(1, 0, false));
-			expect(cardOne.contents.get(11)).toMatchObject(b(1, 1, false));
 
-			const cardTwo = table.cards[1];
-			expect(cardTwo.contents.get(5)).toMatchObject(b(0, 0, false));
-			expect(cardTwo.contents.get(15)).toMatchObject(b(0, 1, false));
-			expect(cardTwo.contents.get(16)).toMatchObject(b(1, 0, false));
-			expect(cardTwo.contents.get(17)).toMatchObject(b(1, 1, false));
-		});
-	});
-
-	describe('when marking cards', () => {
-		it('should return nothing if there is no winner');
+	it('should mark all cards and return the winning card if one wins', async () => {
+		const { cards } = await readIntoObject('./source/day4/day4.simple.txt', new ParseBingoCards());
+		expect(markCards(5, cards).length).toBe(0);
+		const winner = markCards(16, cards);
+		expect(winner.length).toBe(1);
+		const card = winner[0];
+		expect(card.complete).toBe(true);
+		expect(card.marked.column[0]).toBe(2);
 	});
 
 	it('should give the answer for the real data', async () => {
-		const values = await readIntoArray('./source/day4/day4.txt', (x) => x);
+		const values = await readIntoObject('./source/day4/day4.txt', new ParseBingoCards());
+		const result = solvePartOne(values);
+		expect(result).toBe(33348);
+	});
+});
+
+describe('when solving the day 4 part 2 challenge', () => {
+	it('should return 1924 on the sample input', async () => {
+		const values = await readIntoObject('./source/day4/day4.sample.txt', new ParseBingoCards());
 		const result = solvePartTwo(values);
-		expect(result).toBe(10);
+		expect(result).toBe(1924);
+	});
+
+	it('should give the answer for the real data', async () => {
+		const values = await readIntoObject('./source/day4/day4.txt', new ParseBingoCards());
+		const result = solvePartTwo(values);
+		expect(result).toBe(8112);
 	});
 });
