@@ -53,3 +53,41 @@ export function parseVent(line: string): Vent {
 		},
 	};
 }
+
+export function key(coord: Coord): string {
+	return `${coord.x},${coord.y}`;
+}
+
+export function mapVents(vents: Vent[], diagonal: boolean): Map<string, number> {
+	const map: Map<string, number> = new Map();
+	for (const vent of vents) {
+		const { start, end } = vent;
+		if (!diagonal && start.x != end.x && start.y != end.y) {
+			continue;
+		}
+		let xDir = 0;
+		let yDir = 0;
+		if (start.x > end.x) {
+			xDir = -1;
+		} else if (start.x < end.x) {
+			xDir = 1;
+		}
+
+		if (start.y > end.y) {
+			yDir = -1;
+		} else if (start.y < end.y) {
+			yDir = 1;
+		}
+
+		let { x, y } = start;
+		let coord = key({ x, y });
+		map.set(coord, (map.get(coord) ?? 0) + 1);
+		do {
+			x += xDir;
+			y += yDir;
+			coord = key({ x, y });
+			map.set(coord, (map.get(coord) ?? 0) + 1);
+		} while (x != end.x || y != end.y);
+	}
+	return map;
+}
