@@ -7,7 +7,9 @@ export interface ObjectParser<Type> {
 	complete(): Type;
 }
 
-export async function readIntoArray<Type>(uri: string, parser: (value: string) => Type): Promise<Array<Type>> {
+export type Parser<Type> = (value: string) => Type;
+
+export async function readIntoArray<Type>(uri: string, parser: Parser<Type>): Promise<Array<Type>> {
 	const fileStream = fs.createReadStream(uri);
 	const file = readline.createInterface({ input: fileStream });
 	const arr: Array<Type> = [];
@@ -37,4 +39,26 @@ export async function readIntoObject<Type>(uri: string, parser: ObjectParser<Typ
 		parser.next();
 	}
 	return parser.complete();
+}
+
+class CSVLineParser<Type> implements ObjectParser<Array<Type>> {
+	private data: Array<Type>;
+	private parser: Parser<Type>;
+
+	parse(line: string): void {
+		this.data = line.split(',').map(this.parser);
+	}
+	next(): void {}
+	complete(): Type[] {
+		return this.data;
+	}
+
+	constructor(parser: Parser<Type>) {
+		this.parser = parser;
+	}
+}
+
+export async function readFromCSVLine<Type>(uri: string, parser: Parser<Type>): Promise<Array<Type>> {
+	const parseObject = new CSVLineParser<Type>(parser);
+	return readIntoObject(uri, parseObject);
 }
