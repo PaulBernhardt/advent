@@ -103,3 +103,4 @@ dist
 # TernJS port file
 .tern-port
 2020/out/
+2021/source/day7/tmp.txt

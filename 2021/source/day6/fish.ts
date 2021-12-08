@@ -8,7 +8,7 @@ export class FishCollection {
 	// Since we don't have a good internal fish array due to the
 	// next implementation, calculate one when asked, which
 	// just shows you the number of fish in each bucket.
-	public get fish(): number[] {
+	get fish(): number[] {
 		if (this._dirty) {
 			const f = this._cachedFish.fill(0);
 			const current = this.current;
