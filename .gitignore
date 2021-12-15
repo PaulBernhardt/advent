@@ -104,3 +104,4 @@ dist
 .tern-port
 2020/out/
 2021/source/day7/tmp.txt
+2021/env.sh
