@@ -14,14 +14,14 @@ describe('when avoiding chitons', () => {
 		const a = new Path(null, aEnd, 4, dest);
 
 		expect(a.endPoint).toBe(aEnd);
-		expect(a.path).toMatchObject([aEnd]);
+		expect(a.path).toBe(null);
 		expect(a.realIncurredCost).toBe(4);
 		expect(a.estimatedTotalCost).toBe(8);
 
 		const bEnd = new Point(1, 1);
 		const b = new Path(a, bEnd, 2, dest);
 		expect(b.endPoint).toBe(bEnd);
-		expect(b.path).toMatchObject([aEnd, bEnd]);
+		expect(b.path).toBe(a);
 		expect(b.realIncurredCost).toBe(6);
 		expect(b.estimatedTotalCost).toBe(9);
 	});

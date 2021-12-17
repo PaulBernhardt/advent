@@ -24,12 +24,11 @@ export function generateNeighbours(point: Point, max: Point): Point[] {
 export class Path {
 	readonly realIncurredCost: number;
 	readonly estimatedTotalCost: number;
-	readonly path: Point[];
+	readonly path: Path;
 	readonly endPoint: Point;
 
-	constructor(oldPath: Path | null, nextPoint: Point, cost: number, dest: Point) {
-		this.path = Array.from(oldPath?.path ?? []);
-		this.path.push(nextPoint);
+	constructor(oldPath: Path | null = null, nextPoint: Point, cost: number, dest: Point) {
+		this.path = oldPath;
 		this.endPoint = nextPoint;
 
 		this.realIncurredCost = (oldPath?.realIncurredCost ?? 0) + cost;
