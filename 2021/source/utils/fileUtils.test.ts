@@ -1,4 +1,4 @@
-import { readIntoArray, readIntoObject, ObjectParser, readFromCSVLine } from './fileUtils';
+import { readIntoArray, readIntoObject, ObjectParser, readFromCSVLine, SingleLineParser } from './fileUtils';
 
 describe('when reading files', () => {
 	it('should read and parse a list of integers', async () => {
@@ -32,8 +32,16 @@ describe('when reading files', () => {
 		expect(results).toMatchObject({ count: 5, numbers: [10, 501, 4321, 4651234, 4] });
 	});
 
-	it('should read and parse a single line', async () => {
+	it('should read and parse a single CSV line', async () => {
 		const result = await readFromCSVLine<number>('./source/utils/testSingleLine.txt', (x) => parseInt(x));
 		expect(result).toMatchObject([5, 4, 6, 5, 13]);
+	});
+
+	it('should read and parse a single line', async () => {
+		const result = await readIntoObject(
+			'./source/utils/testSingleLine.txt',
+			new SingleLineParser<string>((x) => 'test' + x),
+		);
+		expect(result).toEqual('test5,4,6,5,13');
 	});
 });

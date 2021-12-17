@@ -41,24 +41,24 @@ export async function readIntoObject<Type>(uri: string, parser: ObjectParser<Typ
 	return parser.complete();
 }
 
-class CSVLineParser<Type> implements ObjectParser<Array<Type>> {
-	private data: Array<Type>;
+export async function readFromCSVLine<Type>(uri: string, parser: Parser<Type>): Promise<Array<Type>> {
+	const parseObject = new SingleLineParser<Array<Type>>((line) => line.split(',').map(parser));
+	return readIntoObject(uri, parseObject);
+}
+
+export class SingleLineParser<Type> implements ObjectParser<Type> {
+	private data: Type;
 	private parser: Parser<Type>;
 
 	parse(line: string): void {
-		this.data = line.split(',').map(this.parser);
+		this.data = this.parser(line);
 	}
 	next(): void {}
-	complete(): Type[] {
+	complete(): Type {
 		return this.data;
 	}
 
 	constructor(parser: Parser<Type>) {
 		this.parser = parser;
 	}
-}
-
-export async function readFromCSVLine<Type>(uri: string, parser: Parser<Type>): Promise<Array<Type>> {
-	const parseObject = new CSVLineParser<Type>(parser);
-	return readIntoObject(uri, parseObject);
 }
