@@ -82,7 +82,7 @@ describe('when parsing packets', () => {
 		];
 
 		for (const [input, total] of tests) {
-			const packet = loadPacket(input as string);
+			const packet = loadPacket(parseHexToBinary(input as string));
 			packet.parse();
 			expect(packet.calcTotal()).toBe(total as number);
 		}

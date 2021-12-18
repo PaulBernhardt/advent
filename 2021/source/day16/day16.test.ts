@@ -31,6 +31,6 @@ describe('when solving the day 16 part two challenge', () => {
 	it('should give the answer for the real data', async () => {
 		const values = await readIntoObject('./source/day16/day16.txt', new SingleLineParser<string>(parseHexToBinary));
 		const result = solvePartTwo(values);
-		expect(result).toBe(1549022289655);
+		expect(result).toBe(1549026292886);
 	});
 });

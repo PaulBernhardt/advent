@@ -110,22 +110,13 @@ export class OperatorPacket extends Packet {
 			case OPERATION.MAX:
 				return Math.max(...this.subpackets.map((packet) => packet.calcTotal()));
 			case OPERATION.GREATER:
-				if (this.subpackets.length > 2) {
-					throw new Error('Too many sub packets');
-				}
-				return this.subpackets[0] > this.subpackets[1] ? 1 : 0;
+				return this.subpackets[0].calcTotal() > this.subpackets[1].calcTotal() ? 1 : 0;
 			case OPERATION.LESSER:
-				if (this.subpackets.length > 2) {
-					throw new Error('Too many sub packets');
-				}
-				return this.subpackets[0] < this.subpackets[1] ? 1 : 0;
+				return this.subpackets[0].calcTotal() < this.subpackets[1].calcTotal() ? 1 : 0;
 			case OPERATION.EQUAL:
-				if (this.subpackets.length > 2) {
-					throw new Error('Too many sub packets');
-				}
-				return this.subpackets[0] == this.subpackets[1] ? 1 : 0;
+				return this.subpackets[0].calcTotal() == this.subpackets[1].calcTotal() ? 1 : 0;
 		}
-		throw new Error('Unhandled operation');
+		return 0;
 	}
 }
 
